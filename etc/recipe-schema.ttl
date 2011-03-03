@@ -1,0 +1,171 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix version: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix recipe: <http://linkedrecipes.org/schema/> .
+
+############################################################################
+# General description of the schema
+############################################################################
+
+<http://linkedrecipes.org/schema>
+  dc:title "Linked Recipe Schema"@en ;
+  rdfs:comment "The Linked Recipe schema is intended to support the expression of recipes using RDF technology. The schema has been designed with an emphasis on ensuring that existing data sources, e.g. Foodist.com, BBC Recipes, Wikibook Cookbook, etc are all be easily converted or re-presented in this format. However the basic structure of the schema should be sufficient to explore richer modelling and annotations, as well as exploring merging recipe data with other information, e.g. carbon footprint data, calorie counting, etc." ;
+  foaf:maker <http://www.ldodds.com#me> ;
+  foaf:maker _:paolo ;
+  foaf:maker <http://davide.eynard.it/rdf/foaf.rdf#me> ;
+  dc:created "2009-09-11"^^xsd:date .
+
+<http://www.ldodds.com#me> a foaf:Person ;
+  foaf:name "Leigh Dodds" .
+
+_:paolo a foaf:Person ;
+  foaf:name "Paolo Castagna" .
+
+############################################################################
+# Classes
+############################################################################
+
+recipe:Recipe a rdfs:Class ;
+  rdfs:label "Recipe" ;
+  rdfs:comment "A recipe" .
+
+recipe:Step a rdfs:Class ;
+  rdfs:label "Recipe Step" ;
+  rdfs:comment "a step or instruction in a recipe" .
+
+recipe:PreparationMethod a rdfs:Class ;
+  rdfs:label "Preparation Method" ;
+  rdfs:comment "a means of preparation uses in a recipe" .
+
+recipe:Tool a rdfs:Class ;
+  rdfs:label "Tool" ;
+  rdfs:comment "a cooking implement or tool" .
+
+recipe:IngredientPortion a rdfs:Class ;
+  rdfs:label "Ingredient Portion" ;
+  rdfs:comment "a portion of some food stuff or ingredient used in a recipe" .
+
+recipe:Ingredient a rdfs:Class ;
+  rdfs:label "Ingredient" ;
+  rdfs:comment "a food stuff used in a recipe" .
+
+############################################################################
+# Properties
+############################################################################
+
+recipe:ingredient a rdf:Property ;
+  rdfs:label "ingredient" ;
+  rdfs:comment "property used to connect a Recipe or a Step to the portion of an ingredient it uses" ;
+  rdfs:range recipe:Ingredient .
+
+recipe:recipe a rdf:Property ;
+  rdfs:label "recipe" ;
+  rdfs:comment "property used to connect an IngredientPortion with a Recipe or Step" ;
+  rdfs:domain recipe:IngredientPortion ;
+  rdfs:range recipe:Recipe.
+
+recipe:uses a rdf:Property ;
+  rdfs:label "uses" ;
+  rdfs:comment "generic use relationship that associated a preparation method with a tool that is used in the method, or a recipe with a tool that is used" .
+
+recipe:usedIn a rdf:Property ;
+  rdfs:label "used in" ;
+  rdfs:comment "inverse of uses" .
+
+recipe:portion a rdf:Property ;
+  rdfs:label "portion" ;
+  rdfs:comment "associates a portion of an ingredient with an ingredient or food stuff" ;
+  rdfs:range recipe:Ingredient ;
+  rdfs:domain recipe:IngredientPortion.
+
+#recipe:portionOf a rdf:Property ;
+#  rdfs:label "portion of" ;
+#  rdfs:comment "associates an ingredient with a portion of that ingredient used in a recipe" ;
+#  rdfs:range recipe:IngredientPortion ;
+#  rdfs:domain recipe:Ingredient.
+
+recipe:pairsWith a rdf:Property ;
+  rdfs:label "pairs with" ;
+  rdfs:comment "associates two ingredients, indicating that they pair well or combine nicely in recipes" ;
+  rdfs:range recipe:Ingredient ;
+  rdfs:domain recipe:Ingredient.
+
+recipe:steps a rdf:Property ;
+  rdfs:label "steps" ;
+  rdfs:comment "the list of steps associated with a Recipe. Expressed as an rdf:List" ;
+  rdfs:domain recipe:Recipe .
+
+recipe:servings a rdf:Property ;
+  rdfs:label "servings" ;
+  rdfs:comment "the number of servings that are produced by a recipe" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range rdfs:Literal .
+
+#TODO document and explain what we expect here. For now it could be 1-5 stars, "expert," etc.
+recipe:skillLevel a rdf:Property ;
+  rdfs:label "skill level" ;
+  rdfs:comment "indication of the skill level associated with a Recipe" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range rdfs:Literal .
+
+#TODO do we need to separately model preparation time and cooking time, as well as a generic "overall" time. 
+recipe:time a rdf:Property ;
+  rdfs:label "time" ;
+  rdfs:comment "indication of the expected time that cooking a recipe with take" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range rdfs:Literal .
+
+recipe:category a rdf:Property ;
+  rdfs:label "category" ;
+  rdfs:comment "a means of classifying a Recipe" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range skos:Concept .
+
+recipe:season a rdf:Property ;
+  rdfs:subPropertyOf recipe:category;
+  rdfs:label "season" ;
+  rdfs:comment "a means of classifying a Recipe based on its seasonality" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range skos:Concept .
+
+recipe:cuisine a rdf:Property
+  rdfs:subPropertyOf recipe:category;
+  rdfs:label "cuisine" ;
+  rdfs:comment "a means of classifying a Recipe based on its cuisine" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range skos:Concept .
+
+recipe:course a rdf:Property
+  rdfs:subPropertyOf recipe:category;
+  rdfs:label "season" ;
+  rdfs:comment "a means of classifying a Recipe based on how it is served in a meal" ;
+  rdfs:domain recipe:Recipe ;
+  rdfs:range skos:Concept .
+
+recipe:dietaryInformation a rdf:Property .
+
+
+
+
+#TODO
+recipe:quantity a rdf:Property ;
+  rdfs:label "quantity" ;
+  rdfs:comment "the quantity of an ingredient" ;
+  rdfs:domain recipe:IngredientPortion ;
+  rdfs:range rdfs:Literal .
+
+recipe:unit a rdf:Property ;
+  rdfs:label "unit" ;
+  rdfs:comment "the amount of an ingredient used in a recipe or step" ;
+  rdfs:domain recipe:IngredientPortion ;
+  rdfs:range rdfs:Literal .
+
+
+

@@ -1,0 +1,15 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+
+<http://data.kasabi.com/dataset/foodisa>
+    dct:description "Conversion of the Foodista food & recipe wiki into RDF" ;
+    dct:source <http://www.foodista.com> ;
+    dct:title "Foodista" ;
+    void:exampleResource <http://data.kasabi.com/dataset/foodista/food/ZM5T2BPP> ;
+    void:vocabulary <http://linkedrecipes.org/schema/>, <http://purl.org/dc/terms/>, <http://xmlns.com/foaf/0.1/> ;
+    a void:Dataset .
+
