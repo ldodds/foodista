@@ -5,6 +5,7 @@ require 'rdf'
 require 'Tool'
 
 $KCODE="U"
+Hpricot.buffer_size = 262144
 
 File.open("#{ARGV[1]}/tools.nt", "w") do |f|
 

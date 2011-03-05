@@ -5,8 +5,9 @@ require 'rdf'
 require 'Technique'
 
 $KCODE="U"
+Hpricot.buffer_size = 262144
 
-File.open("#{ARGV[1]}/foods.nt", "w") do |f|
+File.open("#{ARGV[1]}/techniques.nt", "w") do |f|
 
   Dir.glob("#{ARGV[0]}/*") do |file|
     

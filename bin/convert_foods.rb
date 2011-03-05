@@ -5,6 +5,7 @@ require 'rdf'
 require 'Food'
 
 $KCODE="U"
+Hpricot.buffer_size = 262144
 
 File.open("#{ARGV[1]}/foods.nt", "w") do |f|
 

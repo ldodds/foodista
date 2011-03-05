@@ -5,6 +5,8 @@ require 'rdf'
 require 'Recipe'
 
 $KCODE="U"
+Hpricot.buffer_size = 262144
+
 File.open("#{ARGV[1]}/recipes.nt", "w") do |f|
 
   Dir.glob("#{ARGV[0]}/*") do |file|
