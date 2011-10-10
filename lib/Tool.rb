@@ -12,44 +12,35 @@ class Tool < Base
     @statements = []
     @uri = RDF::URI.new( Util.canonicalize("/tool/#{@id}"))
       
-    @doc.search("meta").each do |meta|
-      case meta["property"]
-      when "og:title"
-        @title = meta["content"]
-      when "og:url"
-        @homepage = meta["content"]
-      when "og:image"
-        @image = meta["content"] if @doc.search(".photo-vote").empty?
-      end      
-    end  
+    #title
+    @title = @doc.at("h1").inner_text
+    @title = @title.gsub("Tool: ", "")
     
+    #url
+    @doc.search("link").each do |link|
+      if link["rel"] == "canonical"
+        @homepage = link["href"]
+      end
+    end
+    
+    #image
+    @image = @doc.at(".featured-image img")["src"]
+    
+    #tags
+    #FIXME tools no longer have tags?
     @tags = []
-    @doc.search("#content-meta p a").each do |link|
-      if link["href"].match(/\/search\?tag=/)
-        @tags << normalize_tag( link.inner_text )
-      end
-    end
     
+    #about
+    about = @doc.at(".pane-node-field-about .pane-content")
+    @about = about.inner_text if about
+              
+    #other names        
     @other_names = []
-    @doc.search("#content-meta p strong").each do |p|
-      if p.inner_text =~ /Other Names/
-        @other_names = p.parent.inner_text.gsub("Other Names: ", "").split(",").map{|x| x.lstrip.rstrip }
-      end
+    food_info = @doc.search(".tool_information .inline-field")
+    if food_info.length > 1
+      @other_names = food_info[0].inner_text.gsub("Other names: ", "").split(",").map{|x| x.lstrip.rstrip }      
     end
 
-    @doc.search("h2").each do |heading|
-      if heading.inner_text =~ /About #{@title}/
-        if heading.next_sibling.at("p")
-          @about = heading.next_sibling.at("p").inner_text
-        end
-      end
-    end
-
-    @related_links = []
-    @doc.search(".related-external .more").each do |link|
-      @related_links << link["href"]
-    end
-        
     generate_statements()    
   end
   
@@ -76,16 +67,7 @@ class Tool < Base
     @other_names.each do |name|
       add_property( RDF::SKOS.altLabel, RDF::Literal.new( name ) )
     end
-            
-    @related_links.each do |link|
-      #TODO primaryTopic/topic
-      if ( /en\.wikipedia\.org/.match(link) )    
-          dbpedia_uri = RDF::URI.new( link.sub("en.wikipedia.org/wiki", "dbpedia.org/resource") )
-          add_property( RDF::OWL.sameAs, RDF::URI.new( dbpedia_uri ) )
-          add_property( RDF::FOAF.isPrimaryTopicOf, RDF::URI.new( link ) )
-          add_statement( RDF::URI.new( link ), RDF::FOAF.primaryTopic, @uri )
-      end
-    end
+
     
   end
 end

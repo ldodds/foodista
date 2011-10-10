@@ -12,58 +12,36 @@ class Food < Base
     @statements = []
     @uri = RDF::URI.new( Util.canonicalize("/food/#{@id}"))
       
-    @doc.search("meta").each do |meta|
-      case meta["property"]
-      when "og:title"
-        @title = meta["content"]
-      when "og:url"
-        @homepage = meta["content"]
-      when "og:image"
-        @image = meta["content"] if @doc.search(".photo-vote").empty?
-      end
-      
-    end  
+    #title
+    @title = @doc.at("h1").inner_text
+    @title = @title.gsub("Food: ", "")
     
+    #url
+    @doc.search("link").each do |link|
+      if link["rel"] == "canonical"
+        @homepage = link["href"]
+      end
+    end
+    
+    #image
+    @image = @doc.at(".featured-image img")["src"]
+      
+    #tags
+    #FIXME foods no longer have tags?
     @tags = []
-    @doc.search("#content-meta p a").each do |link|
-      if link["href"].match(/\/search\?tag=/)
-        @tags << normalize_tag( link.inner_text )
-      end
-    end
-    
+                
+    #about
+    about = @doc.at(".pane-node-field-about .pane-content")
+    @about = about.inner_text if about
+              
+    #other names        
     @other_names = []
-    @doc.search("#content-meta p strong").each do |p|
-      if p.inner_text =~ /Other Names/
-        @other_names = p.parent.inner_text.gsub("Other Names: ", "").split(",").map{|x| x.lstrip.rstrip }
-      end
+    food_info = @doc.search(".food_information .inline-field")
+    if food_info.length > 1
+      @other_names = food_info[0].inner_text.gsub("Other names: ", "").split(",").map{|x| x.lstrip.rstrip }      
     end
     
-    #TODO translations: provided in page, but also on a separate page
-    
-    @doc.search("h2").each do |heading|
-      if heading.inner_text =~ /About #{@title}/
-        if heading.next_sibling.at("p")
-          @about = heading.next_sibling.at("p").inner_text
-        end
-      end
-    end
-    
-    @related_links = []
-    @doc.search(".related-external .more").each do |link|
-      @related_links << link["href"]
-    end
-
-    @related_recipes = []
-    @doc.search(".related-recipes-detailed a").each do |link|
-      
-      if link["href"].match(/\/recipe\/([A-Z0-9]+)\/.+/)
-        @related_recipes << link["href"].match(/\/recipe\/([A-Z0-9]+)\/.+/)[1]
-      end  
-    end
-    
-    #TODO: review decision not to include links to related foods, tools, etc
-    #From a brief review many of these look spurious. E.g. Watermelon and Pig Stomach being 
-    #related to Redfish
+    #TODO translations: provided in page, but also on a separate page    
     
     generate_statements()
     
@@ -72,7 +50,7 @@ class Food < Base
   def generate_statements()
     recipes = RDF::Vocabulary.new("http://linkedrecipes.org/schema/")
     
-    add_property( RDF.type, recipes.Food )
+    add_property( RDF.type, recipes.Ingredient )
     add_property( RDF::RDFS.label, @title) if @title
     add_property( RDF::DC.description, @about) if @about 
     add_property( RDF::FOAF.depiction, @image) if @image
@@ -93,19 +71,6 @@ class Food < Base
       add_property( RDF::SKOS.altLabel, RDF::Literal.new( name ) )
     end
     
-    @related_links.each do |link|
-      #TODO primaryTopic/topic
-      if ( /en\.wikipedia\.org/.match(link) )    
-          dbpedia_uri = RDF::URI.new( link.sub("en.wikipedia.org/wiki", "dbpedia.org/resource") )
-          add_property( RDF::OWL.sameAs, RDF::URI.new( dbpedia_uri ) )
-          add_property( RDF::FOAF.isPrimaryTopicOf, RDF::URI.new( link ) )
-          add_statement( RDF::URI.new( link ), RDF::FOAF.primaryTopic, @uri )
-      end
-    end
-    
-    @related_recipes.each do |id|
-      add_property( RDF::DC.related, RDF::URI.new( Util.canonicalize("/recipe/#{id}") ) )
-    end
   end
   
 end
