@@ -5,7 +5,7 @@ require 'open-uri'
 require 'hpricot'
 require 'Crawler'
 
-INDEX = "http://www.foodista.com/browse/recipes"
+INDEX = "hhttp://www.foodista.com/browse/recipes/page/1/0"
 
 crawler = Crawler.new(INDEX, ARGV[0])
 puts "Caching Recipes"
