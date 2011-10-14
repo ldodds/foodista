@@ -93,7 +93,7 @@ class Recipe < Base
         techniques = []
         step.search("a").each do |link|
           if link["href"].match(/\/technique\/([A-Z0-9]+)\/.+/)
-            techniques << link["href"].match(/http\:\/\/www\.foodista\.com\/technique\/([A-Z0-9]+)\/.+/)[1]
+            techniques << link["href"].match(/\/technique\/([A-Z0-9]+)\/.+/)[1]
           end
           if link["href"].match(/^\/([A-Z0-9]+)$/)
             id = link["href"].match(/^\/([A-Z0-9]+)$/)[1]
