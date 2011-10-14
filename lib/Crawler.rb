@@ -70,10 +70,10 @@ class Crawler
       if count % 1000 == 0
         puts "Fetched #{count} of #{@pages.size}" 
       end
-      if limit != 0 && count >= limit
-        puts "Stopping early, reached limit of #{limit}"
-        return
-      end
+      #if limit != 0 && count >= limit
+      #  puts "Stopping early, reached limit of #{limit}"
+      #  return
+      #end
     end    
   end
   
