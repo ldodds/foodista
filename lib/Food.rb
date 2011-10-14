@@ -24,8 +24,11 @@ class Food < Base
     end
     
     #image
-    @image = @doc.at(".featured-image img")["src"]
-      
+    img = @doc.at(".featured-image img")
+    if img
+      @image = img["src"]
+    end
+    
     #tags
     #FIXME foods no longer have tags?
     @tags = []
