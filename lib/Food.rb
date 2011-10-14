@@ -32,7 +32,7 @@ class Food < Base
                 
     #about
     about = @doc.at(".pane-node-field-about .pane-content")
-    @about = about.inner_text if about
+    @about = normalize_tag(about.inner_text) if about
               
     #other names        
     @other_names = []

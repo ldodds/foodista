@@ -28,8 +28,8 @@ class Recipe < Base
     @image = @doc.at(".featured-image img")["src"]
         
     #about
-    about = @doc.at(".pane-node-field-about .pane-content")
-    @about = about.inner_text if about
+    about = @doc.at(".pane-node-body .field-item")
+    @about = normalize_tag(about.inner_text) if about
               
     #other names        
     @other_names = []
@@ -127,6 +127,7 @@ class Recipe < Base
     #TODO edit trail
     add_property( RDF.type, recipes.Recipe )
     add_property( RDF::DC.title, @title) if @title
+    add_property( RDF::DC.description, @about) if @about
     add_property( RDF::FOAF.depiction, @image) if @image
     add_property( recipes.servings, RDF::Literal.new(@servings, :datatype => RDF::XSD.int) ) if @servings
     if @homepage
