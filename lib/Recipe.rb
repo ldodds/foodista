@@ -45,7 +45,12 @@ class Recipe < Base
         
     servings = @doc.at(".field-name-field-yield .field-item")
     if servings
-      @servings = servings.inner_text.split(" ")[0]
+      servings = servings.inner_text.split(" ")
+      if servings[0] == "Serves"
+        @servings = servings[1]
+      else
+        @servings = servings[0]
+      end
     end
 
     @related = []
