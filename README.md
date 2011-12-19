@@ -17,7 +17,7 @@ the RDF.rb library for serializing the RDF as ntriples.
 
 After downloading the code, run the following to pull in the required dependencies:
 
-	sudo gem install hpricot rdf
+	sudo gem install htmlentities hpricot rdf 
 
 USAGE
 -----
