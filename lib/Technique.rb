@@ -24,7 +24,8 @@ class Technique < Base
     end
     
     #image
-    @image = @doc.at(".featured-image img")["src"]
+    image = @doc.at(".featured-image img")
+    @image = image["src"] if image
     
     #tags
     #FIXME tools no longer have tags?

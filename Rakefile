@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'rake'
 require 'rake/clean'
-require 'pho'
 
 BASE_DIR="data"
 CACHE_DIR="#{BASE_DIR}/cache"
@@ -33,18 +32,22 @@ end
 task :cache => [:cache_foods, :cache_techniques, :cache_tools, :cache_recipes]
 
 task :convert_recipes do
+  sh %{mkdir -p #{DATA_DIR} }
   sh %{ruby bin/convert_recipes.rb #{CACHE_DIR}/recipes #{DATA_DIR} }
 end
 
 task :convert_foods do
+  sh %{mkdir -p #{DATA_DIR} }
   sh %{ruby bin/convert_foods.rb #{CACHE_DIR}/foods #{DATA_DIR} }
 end
 
 task :convert_tools do
+  sh %{mkdir -p #{DATA_DIR} }
   sh %{ruby bin/convert_tools.rb #{CACHE_DIR}/tools #{DATA_DIR} }
 end
 
 task :convert_techniques do
+  sh %{mkdir -p #{DATA_DIR} }
   sh %{ruby bin/convert_techniques.rb #{CACHE_DIR}/techniques #{DATA_DIR} }
 end
 
