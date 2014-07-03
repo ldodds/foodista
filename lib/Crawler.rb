@@ -12,23 +12,27 @@ class Crawler
     @pages = []
   end
   
-  def cache_page(url)    
+  def cache_page(url) 
     match = url.match(/http\:\/\/www\.foodista\.com\/(recipe|food|technique|tool)\/([A-Z0-9]+)\/.+/)
     if match
-      uri = URI.parse( url )
-      begin
-        page_data = uri.read
-        f = File.open( File.join(ARGV[0], match[2]), "w" )
-        f.puts(page_data)
-      rescue => e
-        puts e
-        puts "Unable to fetch #{url}"
-      end 
+      fn = File.join(ARGV[0], match[2])
+      if !File.exists?(fn) 
+        uri = URI.parse( url )
+        begin
+          page_data = uri.read
+          f = File.open( fn, "w" )
+          f.puts(page_data)
+        rescue => e
+          puts e
+          puts "Unable to fetch #{url}"
+        end
+      else 
+        # puts "Skipping #{url}, already retrieved."
+      end
     else
       puts "Warning: Unknown url pattern for #{url}"
     end
-    sleep(0.5)  
-
+    sleep(0.5)
   end
   
   def add_links(doc)  

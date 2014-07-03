@@ -134,7 +134,7 @@ class Recipe < Base
     add_property( RDF::DC.title, @title) if @title
     add_property( RDF::DC.description, @about) if @about
     add_property( RDF::FOAF.depiction, @image) if @image
-    add_property( recipes.servings, RDF::Literal.new(@servings, :datatype => RDF::XSD.int) ) if @servings
+    add_property( recipes.servings, RDF::Literal.new(@servings.to_f.ceil, :datatype => RDF::XSD.int) ) if @servings
     if @homepage
       home = RDF::URI.new(@homepage)
       add_property( RDF::FOAF.isPrimaryTopicOf, home)
